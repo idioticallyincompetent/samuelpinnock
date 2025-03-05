@@ -1,24 +1,52 @@
 {
-  "name": "vite-template-solid",
-  "version": "0.0.1",
-  "description": "",
-  "type": "module",
-  "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+  "name": "nextjs-blog-theme",
+  "description": "A customizable Next.js and Tailwind blog starter. Designed by the Bejamas agency.",
+  "author": "Bejamas and Netlify Inc.",
+  "contributors": [
+    "Charlie Gerard",
+    "Prince Wilson",
+    "Tara Manicsic",
+    "Thom Krupa"
+  ],
+  "homepage": "https://github.com/netlify-templates/nextjs-blog-theme",
+  "bugs": {
+    "url": "https://github.com/netlify-templates/nextjs-blog-theme/issues"
   },
-  "license": "MIT",
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.0",
-    "tailwindcss": "^4.0.0",
-    "vite": "^6.0.0",
-    "vite-plugin-solid": "^2.11.0"
+  "scripts": {
+    "dev": "next",
+    "dev:watch": "next-remote-watch ./posts",
+    "build": "next build",
+    "start": "next start",
+    "export": "next build && next export",
+    "lint": "next lint"
   },
   "dependencies": {
-    "@solidjs/router": "^0.15.3",
-    "@tailwindcss/vite": "^4.0.0",
-    "solid-js": "^1.9.3"
-  }
+    "@mapbox/rehype-prism": "^0.9.0",
+    "@tailwindcss/typography": "^0.5.12",
+    "classnames": "^2.3.1",
+    "gray-matter": "^4.0.3",
+    "katex": "^0.16.11",
+    "math": "^0.0.3",
+    "next": "^14.1.4",
+    "next-mdx-remote": "^5.0.0",
+    "next-remote-watch": "2.0.0",
+    "nextra": "^2.13.4",
+    "prismjs": "^1.29.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rehype-katex": "^7.0.1",
+    "rehype-mathjax": "^6.0.0",
+    "remark": "^15.0.1",
+    "remark-gfm": "^4.0.0",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.1.4",
+    "eslint-config-prettier": "^9.1.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4"
+  },
+  "license": "MIT"
 }
