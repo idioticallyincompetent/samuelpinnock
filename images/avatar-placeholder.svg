@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <rect width="240" height="240" fill="#171B24"/>
+  <circle cx="120" cy="96" r="42" fill="#232837"/>
+  <path d="M40 210c8-46 46-74 80-74s72 28 80 74" fill="#232837"/>
+  <text x="120" y="228" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="#5B8CFF">REPLACE ME</text>
+</svg>
