@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samuel W. Pinnock — Production Engineer, EUV Laser Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0D12;
+    --surface:#12151C;
+    --surface-2:#171B24;
+    --line:#232837;
+    --text:#E9EDF3;
+    --text-dim:#8A93A6;
+    --accent:#5B8CFF;
+    --accent-warm:#F0A93A;
+    --radius:2px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--accent-warm); outline-offset:3px;}
+
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--accent);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .eyebrow::before{content:""; width:16px; height:1px; background:var(--accent);}
+
+  h1,h2,h3,h4{font-family:'Space Grotesk', sans-serif; font-weight:600; letter-spacing:-0.01em;}
+
+  /* ---------- Layout shell ---------- */
+  .rail{
+    position:fixed; top:0; left:0; height:100vh; width:34px;
+    border-right:1px solid var(--line);
+    display:none;
+    z-index:5;
+  }
+  .rail-track{position:relative; height:100%; margin:32px 0;}
+  .rail-tick{
+    position:absolute; left:0; width:12px; height:1px; background:var(--line);
+  }
+  .rail-tick.active{background:var(--accent); width:20px; height:2px;}
+
+  .page{ display:flex; min-height:100vh; }
+
+  .sidebar{
+    width:340px;
+    flex-shrink:0;
+    padding:56px 40px;
+    border-right:1px solid var(--line);
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .sidebar::-webkit-scrollbar{width:0;}
+
+  .main{
+    flex:1;
+    min-width:0;
+    padding:56px 64px 120px;
+    max-width:880px;
+  }
+
+  /* ---------- Sidebar contents ---------- */
+  .photo-frame{
+    position:relative;
+    width:120px; height:120px;
+    margin-bottom:24px;
+  }
+  .photo-frame img{
+    width:100%; height:100%; object-fit:cover;
+    filter:grayscale(15%) contrast(1.05);
+    border:1px solid var(--line);
+  }
+  .photo-frame::before,
+  .photo-frame::after,
+  .photo-frame span::before,
+  .photo-frame span::after{
+    content:""; position:absolute; width:12px; height:12px;
+    border-color:var(--accent-warm); pointer-events:none;
+  }
+  .photo-frame::before{ top:-6px; left:-6px; border-top:2px solid; border-left:2px solid;}
+  .photo-frame::after{ top:-6px; right:-6px; border-top:2px solid; border-right:2px solid;}
+  .photo-frame span::before{ bottom:-6px; left:-6px; border-bottom:2px solid; border-left:2px solid;}
+  .photo-frame span::after{ bottom:-6px; right:-6px; border-bottom:2px solid; border-right:2px solid;}
+
+  .name{font-size:24px; line-height:1.2; margin-bottom:6px;}
+  .role{color:var(--text-dim); font-size:14px; margin-bottom:28px;}
+
+  .side-block{margin-bottom:28px;}
+  .side-block h4{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--text-dim); margin-bottom:10px; font-weight:500;
+  }
+  .side-block ul{list-style:none;}
+  .side-block li{font-size:14px; margin-bottom:6px; color:var(--text);}
+  .side-block a{color:var(--text);}
+  .side-block a:hover{color:var(--accent);}
+
+  .tag-row{display:flex; flex-wrap:wrap; gap:6px;}
+  .tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px;
+    border:1px solid var(--line); padding:4px 8px; color:var(--text-dim);
+    border-radius:var(--radius);
+  }
+
+  .side-nav{margin-top:32px;}
+  .side-nav a{
+    display:block; font-size:13px; padding:6px 0; color:var(--text-dim);
+    border-left:2px solid transparent; padding-left:10px; margin-left:-12px;
+  }
+  .side-nav a.active{color:var(--text); border-left-color:var(--accent);}
+
+  /* ---------- Hero ---------- */
+  .hero{ padding-top:8px; margin-bottom:72px; position:relative; overflow:hidden;}
+  .hero-beam{
+    position:absolute; top:44px; left:0; width:100%; height:1px;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform:scaleX(0); transform-origin:left; opacity:0.8;
+    animation:sweep 1.4s ease-out 0.2s forwards;
+  }
+  @keyframes sweep{ to { transform:scaleX(1); } }
+  .hero h1{ font-size:38px; line-height:1.15; max-width:620px; margin-bottom:22px;}
+  .hero p.lede{ color:var(--text-dim); font-size:16px; max-width:560px; }
+
+  /* ---------- Sections ---------- */
+  section{ margin-bottom:76px; scroll-margin-top:40px;}
+  section h2{font-size:22px; margin-bottom:24px;}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px 30px;
+  }
+  .role-block + .role-block{ margin-top:28px; }
+  .role-head{ display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:4px;}
+  .role-head .period{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent); white-space:nowrap;}
+  .role-head h3{font-size:17px;}
+  .role-org{color:var(--text-dim); font-size:14px; margin-bottom:14px;}
+  .role-block ul{ padding-left:18px; }
+  .role-block li{ margin-bottom:8px; font-size:15px; }
+  .role-block li::marker{ color:var(--accent-warm); }
+
+  .skill-grid{ display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+  .skill-grid h4{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--text-dim); margin-bottom:14px;
+  }
+  .skill-grid .tag-row{ gap:8px; }
+  .skill-grid .tag{ font-size:12px; padding:6px 10px; }
+
+  .timeline{ position:relative; padding-left:28px; border-left:1px solid var(--line);}
+  .tl-item{ position:relative; margin-bottom:40px;}
+  .tl-item:last-child{ margin-bottom:0; }
+  .tl-item::before{
+    content:""; position:absolute; left:-33px; top:4px;
+    width:9px; height:9px; border-radius:50%;
+    background:var(--bg); border:2px solid var(--accent);
+  }
+  .tl-period{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent); margin-bottom:6px; display:block;}
+  .tl-item h3{ font-size:16px; margin-bottom:2px;}
+  .tl-org{ color:var(--text-dim); font-size:14px; margin-bottom:4px;}
+  .tl-focus{ font-size:13px; color:var(--text-dim); margin-bottom:10px; font-style:italic;}
+  .tl-item ul{ padding-left:18px; }
+  .tl-item li{ font-size:14.5px; margin-bottom:6px; }
+  .tl-item li::marker{ color:var(--accent-warm); }
+
+  .talk{ border-bottom:1px solid var(--line); padding:20px 0; }
+  .talk:first-child{ padding-top:0; }
+  .talk:last-child{ border-bottom:none; padding-bottom:0; }
+  .talk-meta{ display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:6px;}
+  .talk-date{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent); }
+  .talk-place{ font-size:14px; font-weight:500; }
+  .talk-title{ font-size:14.5px; color:var(--text-dim); font-style:italic; }
+
+  .pub{ font-size:14.5px; color:var(--text-dim); line-height:1.7; }
+  .pub .authors{ color:var(--text); }
+
+  footer{
+    border-top:1px solid var(--line);
+    padding-top:32px;
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:16px;
+    color:var(--text-dim); font-size:13px;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono',monospace; font-size:13px;
+    border:1px solid var(--accent); color:var(--accent);
+    padding:10px 18px; border-radius:var(--radius);
+    text-decoration:none;
+  }
+  .btn:hover{ background:var(--accent); color:var(--bg); text-decoration:none; }
+
+  .lang-switch{
+    position:fixed; top:24px; right:24px; z-index:10;
+    font-family:'IBM Plex Mono',monospace; font-size:12px;
+    border:1px solid var(--line); background:var(--surface);
+    padding:8px 12px; border-radius:var(--radius); color:var(--text-dim);
+  }
+  .lang-switch a{ color:var(--text-dim); }
+  .lang-switch a.current{ color:var(--accent); }
+
+  @media (min-width:900px){ .rail{display:block;} }
+  @media (max-width:900px){
+    .page{ flex-direction:column; }
+    .sidebar{ position:relative; height:auto; width:100%; border-right:none; border-bottom:1px solid var(--line); }
+    .main{ padding:40px 24px 100px; max-width:none; }
+    .skill-grid{ grid-template-columns:1fr; }
+    .lang-switch{ top:16px; right:16px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .hero-beam{ animation:none; transform:scaleX(1); }
+  }
+</style>
+</head>
+<body>
+
+<div class="lang-switch">
+  <a href="index-en.html" class="current">EN</a> / <a href="index.html">DE</a>
+</div>
+
+<div class="rail" aria-hidden="true">
+  <div class="rail-track" id="railTrack"></div>
+</div>
+
+<div class="page">
+
+  <aside class="sidebar">
+    <div class="photo-frame">
+      <img src="https://samuelpinnock.com/_next/image?url=%2Fimages%2Ffoto.jpg&w=3840&q=75" alt="Portrait of Samuel W. Pinnock">
+      <span></span>
+    </div>
+    <div class="name">Samuel W. Pinnock</div>
+    <div class="role">Production Engineer<br>EUV Laser Systems</div>
+
+    <div class="side-block">
+      <h4>Contact</h4>
+      <ul><li><a href="mailto:pinnock.samuel@gmail.com">pinnock.samuel@gmail.com</a></li></ul>
+    </div>
+
+    <div class="side-block">
+      <h4>Areas of Expertise</h4>
+      <ul>
+        <li><a href="https://samuelpinnock.com/posts/solid_state_physics">Solid-state physics</a></li>
+        <li><a href="https://samuelpinnock.com/posts/optics">Optics</a></li>
+        <li><a href="https://samuelpinnock.com/posts/atomic_physics">Atomic physics</a></li>
+      </ul>
+    </div>
+
+    <div class="side-block">
+      <h4>Languages</h4>
+      <ul>
+        <li>English — native</li>
+        <li>German — <a href="https://samuelpinnock.com/posts/c2_language">C2</a></li>
+      </ul>
+    </div>
+
+    <div class="side-block">
+      <h4>Strengths</h4>
+      <div class="tag-row">
+        <span class="tag">Detail-oriented</span>
+        <span class="tag">Team player</span>
+        <span class="tag">Conscientious</span>
+      </div>
+    </div>
+
+    <nav class="side-nav" id="sideNav">
+      <a href="#profile">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
+      <a href="#curriculum">Curriculum</a>
+      <a href="#talks">Talks</a>
+      <a href="#publications">Publications</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <section class="hero" id="top">
+      <div class="hero-beam"></div>
+      <h1>Precision in the production of EUV laser systems — from the lab bench to the series-production floor.</h1>
+      <p class="lede">Physicist with a background in solid-state physics, optics, and atomic physics. Today, as a production engineer at TRUMPF, I'm responsible for qualifying mission-critical assemblies for EUV laser systems.</p>
+    </section>
+
+    <section id="profile">
+      <div class="eyebrow">About me</div>
+      <div class="card">
+        <p>I emigrated to Germany at 18. After learning the language, I moved to Stuttgart to study physics. Over the course of my degree I focused in particular on solid-state physics, optics, and atomic physics.</p>
+        <br>
+        <p>My academic path exposed me to a broad range of measurement methods and analysis techniques — I'm drawn to optimizing and automating measurement workflows, which lets me put my programming skills to use. Precision and organization are central to how I work.</p>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="eyebrow">Brief résumé</div>
+      <div class="card">
+        <div class="role-block">
+          <div class="role-head">
+            <h3>Production Engineer, Optics / EUV — TRUMPF</h3>
+            <span class="period">2023 — present</span>
+          </div>
+          <div class="role-org">TRUMPF Lasersystems for Semiconductor Manufacturing SE + Co. KG (TLSM), Ditzingen</div>
+          <ul>
+            <li>Optimizing the assembly of mission-critical components for <a href="https://samuelpinnock.com/posts/euv">EUV laser systems</a>.</li>
+            <li>Overseeing and executing complex optical qualifications of EUV-relevant assemblies.</li>
+            <li>Developing qualification software in Python to automate and streamline product-specific production processes.</li>
+            <li>Designing and implementing long-term corrective actions for recurring defects.</li>
+            <li>Representing product-specific production interests as the interface between assembly, engineering, and quality assurance.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="eyebrow">IT &amp; measurement skills</div>
+      <div class="card skill-grid">
+        <div>
+          <h4>IT skills</h4>
+          <div class="tag-row">
+            <span class="tag">Python</span>
+            <span class="tag">Matlab</span>
+            <span class="tag">UNIX</span>
+            <span class="tag">SQL</span>
+            <span class="tag">MS Office</span>
+            <span class="tag">JavaScript</span>
+          </div>
+        </div>
+        <div>
+          <h4>Measurement technique skills</h4>
+          <div class="tag-row">
+            <span class="tag"><a href="https://samuelpinnock.com/posts/interferometry">Interferometry</a></span>
+            <span class="tag"><a href="https://samuelpinnock.com/posts/thz_spectroscopy">THz spectroscopy</a></span>
+            <span class="tag"><a href="https://samuelpinnock.com/posts/ftir_spectroscopy">FTIR spectroscopy</a></span>
+            <span class="tag"><a href="https://samuelpinnock.com/posts/magnete">High magnetic fields</a></span>
+            <span class="tag"><a href="https://samuelpinnock.com/posts/photolume">Photoluminescence spectroscopy</a></span>
+            <span class="tag"><a href="https://samuelpinnock.com/posts/rem">SEM</a> / <a href="https://samuelpinnock.com/posts/afm">AFM</a></span>
+            <span class="tag"><a href="https://samuelpinnock.com/posts/ellipsometry">Ellipsometry</a></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="curriculum">
+      <div class="eyebrow">Curriculum</div>
+      <div class="timeline">
+
+        <div class="tl-item">
+          <span class="tl-period">2022 — 2023</span>
+          <h3>Physics (PhD, unfinished)</h3>
+          <div class="tl-org">University of Stuttgart</div>
+          <div class="tl-focus">Focus: Solid-state physics</div>
+          <ul>
+            <li>Characterized exotic materials via spectroscopic measurements using infrared and THz radiation.</li>
+            <li>Supervised the THz laboratory at the 1st Institute of Physics.</li>
+            <li>Trained students in high-magnetic-field spectroscopy and the handling of cryogenic liquids.</li>
+          </ul>
+        </div>
+
+        <div class="tl-item">
+          <span class="tl-period">2019 — 2022</span>
+          <h3>Physics (M.Sc., grade 1.4)</h3>
+          <div class="tl-org">University of Stuttgart</div>
+          <div class="tl-focus">Focus: Optics</div>
+          <ul>
+            <li>Master's thesis: established a new research direction for the institute in <a href="https://samuelpinnock.com/posts/vortex_beams">THz vortex beams</a>.</li>
+            <li>Designed and built an interferometer for detecting and qualifying vortex beams.</li>
+            <li>Developed and implemented 3D-printed optics for THz radiation.</li>
+          </ul>
+        </div>
+
+        <div class="tl-item">
+          <span class="tl-period">2016 — 2019</span>
+          <h3>Physics (B.Sc.)</h3>
+          <div class="tl-org">University of Stuttgart</div>
+          <div class="tl-focus">Focus: <a href="https://samuelpinnock.com/posts/atomic_physics">Atomic physics</a></div>
+          <ul>
+            <li>Bachelor's thesis: developed an absorption-imaging system with infrared lasers for an ion microscope, and automated the imaging system in C++.</li>
+          </ul>
+        </div>
+
+        <div class="tl-item">
+          <span class="tl-period">2014 — 2015</span>
+          <h3>Language school</h3>
+          <div class="tl-org">did deutsch-institut, Berlin</div>
+          <ul>
+            <li>Passed the <a href="https://samuelpinnock.com/posts/testdaf">TestDaF exam</a>.</li>
+            <li>Reached German proficiency up to level C1.</li>
+          </ul>
+        </div>
+
+        <div class="tl-item">
+          <span class="tl-period">2010 — 2014</span>
+          <h3><a href="https://samuelpinnock.com/posts/highschool_diploma">High school diploma</a> (converted GPA 1.34)</h3>
+          <div class="tl-org">Cherry Creek High School, Colorado, USA</div>
+          <ul>
+            <li>Graduated with Academic High Honors.</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="talks">
+      <div class="eyebrow">Talks</div>
+      <div class="card">
+        <div class="talk">
+          <div class="talk-meta">
+            <span class="talk-place">Spring Meeting of the German Physical Society (DPG), Dresden</span>
+            <span class="talk-date">March 2023</span>
+          </div>
+          <div class="talk-title">Generation of THz vortex beams and interferometric determination of their topological charge</div>
+        </div>
+        <div class="talk">
+          <div class="talk-meta">
+            <span class="talk-place">Laboratoire de Physique des Solides, CNRS Paris-Saclay</span>
+            <span class="talk-date">Nov. 2022</span>
+          </div>
+          <div class="talk-title">Incomplete screening of Ge cyclotron resonance in ordinary Voigt geometry</div>
+        </div>
+        <div class="talk">
+          <div class="talk-meta">
+            <span class="talk-place">IHFG, University of Stuttgart</span>
+            <span class="talk-date">July 2020</span>
+          </div>
+          <div class="talk-title">The physics of low-dimensional structures</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="publications">
+      <div class="eyebrow">Publications</div>
+      <div class="card">
+        <p class="pub">
+          <span class="authors">S. W. Pinnock, S. Roh, T. Biesner, A. V. Pronin, M. Dressel</span> —
+          Generation of THz Vortex Beams and Interferometric Determination of Their Topological Charge,
+          IEEE Transactions on Terahertz Science and Technology, vol. 13, no. 1, pp. 44–49, Jan. 2023.
+          <a href="https://ieeexplore.ieee.org/document/9946421/citations?tabFilter=papers#citations" target="_blank" rel="noopener">doi: 10.1109/TTHZ.2022.3221369</a>
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      <span>© 2026 Samuel W. Pinnock</span>
+      <a class="btn" href="https://samuelpinnock.com/files/resume_2025.pdf" target="_blank" rel="noopener">Download résumé ↓</a>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  const sections = ['top','profile','experience','skills','curriculum','talks','publications'];
+  const track = document.getElementById('railTrack');
+  const navLinks = document.querySelectorAll('#sideNav a');
+
+  if (track) {
+    const total = 40;
+    for (let i = 0; i <= total; i++) {
+      const tick = document.createElement('div');
+      tick.className = 'rail-tick';
+      tick.style.top = (i / total * 100) + '%';
+      if (i % 5 === 0) {
+        tick.style.width = '18px';
+      }
+      track.appendChild(tick);
+    }
+  }
+
+  const ticks = track ? track.querySelectorAll('.rail-tick') : [];
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+        const idx = sections.indexOf(id);
+        const ratio = idx / (sections.length - 1);
+        ticks.forEach((t, i) => {
+          t.classList.toggle('active', Math.abs(i / (ticks.length - 1) - ratio) < 0.02);
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
