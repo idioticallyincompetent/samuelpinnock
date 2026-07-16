@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tap Counter</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0b0d;
+    --bg-panel: #131519;
+    --glow: #ff8a2b;
+    --glow-dim: #6b3a12;
+    --text-dim: #6a6f78;
+    --text-mid: #9aa0aa;
+    --hairline: #23262c;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 50% 40%, rgba(255,138,43,0.05), transparent 60%);
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: var(--text-mid);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.25rem;
+    padding: 2rem;
+    max-width: 420px;
+    width: 100%;
+  }
+
+  .eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .display {
+    display: flex;
+    background: var(--bg-panel);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    padding: 1.75rem 1.25rem;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.02),
+      0 20px 60px -20px rgba(0,0,0,0.8);
+    gap: 0.15rem;
+  }
+
+  .digit-cell {
+    position: relative;
+    width: clamp(2.2rem, 8vw, 3.6rem);
+    height: clamp(3.4rem, 12vw, 5.4rem);
+    background: #060708;
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #1a1c20;
+  }
+
+  .digit-cell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,138,43,0.08), transparent 40%);
+    pointer-events: none;
+  }
+
+  .digit-cell .digit {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    font-size: clamp(2rem, 7vw, 3.2rem);
+    color: var(--glow);
+    text-shadow:
+      0 0 6px rgba(255,138,43,0.85),
+      0 0 18px rgba(255,138,43,0.4),
+      0 0 40px rgba(255,138,43,0.15);
+    transform: translateY(0);
+    transition: transform 0.45s cubic-bezier(.2,.9,.3,1), opacity 0.45s ease;
+  }
+
+  .digit-cell.rolling .digit {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  .digit-cell .digit.incoming {
+    position: absolute;
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  .digit-cell.rolling .digit.incoming {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .label {
+    font-size: 0.68rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--glow-dim);
+  }
+
+  .dot.live {
+    background: var(--glow);
+    box-shadow: 0 0 6px rgba(255,138,43,0.9);
+  }
+
+  .hairline {
+    width: 100%;
+    height: 1px;
+    background: var(--hairline);
+    margin: 0.25rem 0;
+  }
+
+  .log {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .log-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.25rem;
+  }
+
+  .log-list {
+    display: flex;
+    flex-direction: column;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-mid);
+  }
+
+  .log-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .log-row:last-child {
+    border-bottom: none;
+  }
+
+  .log-row .n {
+    color: var(--text-dim);
+  }
+
+  .log-row.newest .n,
+  .log-row.newest .t {
+    color: var(--glow);
+    text-shadow: 0 0 8px rgba(255,138,43,0.35);
+  }
+
+  .log-empty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    padding: 0.4rem 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .digit-cell .digit { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="unit">
+  <div class="eyebrow">samuelpinnock.com</div>
+
+  <div class="display" id="display" aria-live="polite" aria-label="Tap count"></div>
+
+  <div class="label">taps recorded</div>
+
+  <div class="meta">
+    <span class="dot" id="statusDot"></span>
+    <span id="statusText">connecting</span>
+  </div>
+
+  <div class="hairline"></div>
+
+  <div class="log">
+    <div class="log-title">last tapped</div>
+    <div class="log-list" id="logList"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const displayEl = document.getElementById('display');
+  const dotEl = document.getElementById('statusDot');
+  const statusEl = document.getElementById('statusText');
+  const logListEl = document.getElementById('logList');
+
+  const COUNT_KEY = 'tap-counter:count';
+  const LOG_KEY = 'tap-counter:log';
+  const MIN_DIGITS = 4;
+  const LOG_MAX = 8;
+
+  function pad(n) {
+    return String(n).padStart(MIN_DIGITS, '0');
+  }
+
+  function renderDigits(numStr, previousStr, animate) {
+    displayEl.innerHTML = '';
+    const len = numStr.length;
+    for (let i = 0; i < len; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'digit-cell';
+
+      const current = document.createElement('span');
+      current.className = 'digit';
+      current.textContent = numStr[i];
+      cell.appendChild(current);
+
+      if (animate && previousStr && previousStr[i] !== numStr[i]) {
+        const incoming = document.createElement('span');
+        incoming.className = 'digit incoming';
+        incoming.textContent = numStr[i];
+        cell.appendChild(incoming);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => cell.classList.add('rolling'));
+        });
+      }
+      displayEl.appendChild(cell);
+    }
+  }
+
+  function formatTime(iso) {
+    const d = new Date(iso);
+    const now = new Date();
+    const sameDay = d.toDateString() === now.toDateString();
+    const time = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    if (sameDay) return time;
+    const date = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    return `${date} · ${time}`;
+  }
+
+  function renderLog(entries) {
+    logListEl.innerHTML = '';
+    if (!entries.length) {
+      const empty = document.createElement('div');
+      empty.className = 'log-empty';
+      empty.textContent = 'no taps yet';
+      logListEl.appendChild(empty);
+      return;
+    }
+    entries.forEach((entry, idx) => {
+      const row = document.createElement('div');
+      row.className = 'log-row' + (idx === 0 ? ' newest' : '');
+
+      const n = document.createElement('span');
+      n.className = 'n';
+      n.textContent = '#' + entry.n;
+
+      const t = document.createElement('span');
+      t.className = 't';
+      t.textContent = formatTime(entry.at);
+
+      row.appendChild(n);
+      row.appendChild(t);
+      logListEl.appendChild(row);
+    });
+  }
+
+  async function run() {
+    try {
+      let count = 0;
+      try {
+        const existing = await window.storage.get(COUNT_KEY, true);
+        count = existing ? parseInt(existing.value, 10) || 0 : 0;
+      } catch (e) {
+        count = 0;
+      }
+
+      let log = [];
+      try {
+        const existingLog = await window.storage.get(LOG_KEY, true);
+        log = existingLog ? JSON.parse(existingLog.value) : [];
+      } catch (e) {
+        log = [];
+      }
+
+      const beforeStr = pad(count);
+      renderDigits(beforeStr, null, false);
+      renderLog(log);
+      statusEl.textContent = 'recording tap';
+
+      const newCount = count + 1;
+      const afterStr = pad(newCount);
+      const nowIso = new Date().toISOString();
+
+      const newLog = [{ n: newCount, at: nowIso }, ...log].slice(0, LOG_MAX);
+
+      const countResult = await window.storage.set(COUNT_KEY, String(newCount), true);
+      const logResult = await window.storage.set(LOG_KEY, JSON.stringify(newLog), true);
+      if (!countResult || !logResult) throw new Error('write failed');
+
+      setTimeout(() => {
+        renderDigits(afterStr, beforeStr, true);
+        renderLog(newLog);
+        dotEl.classList.add('live');
+        statusEl.textContent = 'tap recorded';
+      }, 250);
+
+    } catch (err) {
+      statusEl.textContent = 'offline — count not saved';
+      renderDigits(pad(0), null, false);
+      renderLog([]);
+      console.error('Tap counter error:', err);
+    }
+  }
+
+  run();
+})();
+</script>
+
+</body>
+</html>
