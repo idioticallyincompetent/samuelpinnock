@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bachelor's Thesis: A Self-Adjusting Imaging System — Samuel W. Pinnock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<header class="post-masthead">
+  <a class="brand" href="../index-en.html">Samuel W. Pinnock</a>
+  <a class="all-posts" href="index-en.html">All posts &rarr;</a>
+</header>
+<main class="post-page">
+  <div class="post-tag">Thesis</div>
+  <h1>An Imaging System That Corrects Itself</h1>
+  <div class="post-card">
+    <p>For my bachelor's thesis at the University of Stuttgart, I built an optical system that automatically re-aligns itself whenever a component in the experimental setup shifts slightly — without anyone having to adjust it by hand.</p>
+
+    <h3>The background</h3>
+    <p>The project sits in the context of ultracold atom research — clouds of atoms cooled to near absolute zero. To see these atoms, a laser beam is sent through a device called an ion microscope. Because the beam needs to hit the atoms from the side, it's redirected inside the microscope by a movable mirror.</p>
+
+    <h3>The problem</h3>
+    <p>That internal mirror has to be driven back into position before every experimental run — and it doesn't land at exactly the same angle each time. Even a tiny deviation is enough to throw the laser beam off its intended path through the microscope. Until now, fixing that meant manually re-aligning the setup each time.</p>
+
+    <h3>The solution</h3>
+    <p>I designed an optical setup that solves this automatically. Two lenses are arranged so that a second, motorized mirror can deliberately change the angle at which the beam arrives — in just the right way that the beam still lands on the same spot on the unreliable internal mirror, no matter how it's tilted. That cancels out the misalignment without anyone needing to touch the setup.</p>
+
+    <h3>Electronics &amp; software</h3>
+    <p>To make the system self-correcting, I added a sensor — a four-quadrant photodiode — that detects exactly where the beam is landing. I designed and built the amplifier circuitry needed to read that sensor myself. A microcontroller reads the sensor data and drives the motors on the correcting mirror accordingly; I wrote the full control software for this, including a search algorithm that first locates the beam roughly and then precisely centers it.</p>
+
+    <h3>Results</h3>
+    <p>In an eight-hour long-term test, I checked whether the centered beam's position quietly drifted over time — it didn't; deviations stayed under 20 micrometers throughout. I then tested the system across a range of mirror misalignments: even with the internal mirror tilted by as much as 1.5 degrees, the system reliably corrected the beam to within a few hundred micrometers of the ideal position — well within the beam's own size and small enough to not interfere with imaging the atoms.</p>
+
+    <h3>Why it matters</h3>
+    <p>The system was built for deployment on an active ultracold-atom experiment. It removes the need for manual re-alignment before every run and ensures the imaging beam reliably makes it through the microscope, regardless of how the internal mirror happens to be sitting on any given day.</p>
+  </div>
+  <div class="post-footer">
+    <a class="btn" href="https://www.pi5.uni-stuttgart.de/documents/abgeschlossene-arbeiten/2019-Pinnock-Samuel-Self-Adjusting-Imaging-Scheme-for-Ultracold-Atoms-BSC.pdf" target="_blank" rel="noopener">Full thesis (PDF) &darr;</a>
+    <a class="btn" href="https://samuelpinnock.com/files/tex/resume.pdf" target="_blank" rel="noopener">Download résumé &darr;</a>
+  </div>
+</main>
+</body>
+</html>

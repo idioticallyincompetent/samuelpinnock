@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bachelorarbeit: Selbst-justierendes Abbildungssystem — Samuel W. Pinnock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<header class="post-masthead">
+  <a class="brand" href="../index.html">Samuel W. Pinnock</a>
+  <a class="all-posts" href="index.html">Alle Beiträge &rarr;</a>
+</header>
+<main class="post-page">
+  <div class="post-tag">Abschlussarbeit</div>
+  <h1>Ein Abbildungssystem, das sich selbst nachjustiert</h1>
+  <div class="post-card">
+    <p>In meiner Bachelorarbeit an der Universität Stuttgart habe ich ein optisches System entwickelt, das sich selbstständig neu ausrichtet, wenn ein Bauteil im Versuchsaufbau leicht verrutscht — und zwar ohne dass jemand von Hand nachjustieren muss.</p>
+
+    <h3>Der Hintergrund</h3>
+    <p>Die Arbeit entstand im Kontext der Forschung an ultrakalten Atomen — Atomwolken, die bis nahe an den absoluten Nullpunkt heruntergekühlt werden. Um diese Atome sichtbar zu machen, wird ein Laserstrahl durch ein sogenanntes Ionenmikroskop geschickt. Da der Strahl von der Seite auf die Atome treffen muss, wird er im Inneren des Mikroskops von einem beweglichen Spiegel umgelenkt.</p>
+
+    <h3>Das Problem</h3>
+    <p>Dieser interne Spiegel muss für jedes Experiment neu in Position gefahren werden — und landet dabei nicht jedes Mal exakt im gleichen Winkel. Schon eine minimale Abweichung reicht aus, damit der Laserstrahl nicht mehr optimal durch das Mikroskop läuft. Bislang musste die Ausrichtung mühsam von Hand korrigiert werden.</p>
+
+    <h3>Die Lösung</h3>
+    <p>Ich habe einen optischen Aufbau entwickelt, der genau dieses Problem automatisch löst. Zwei Linsen sind so angeordnet, dass ein zweiter, motorisierter Spiegel den Einfallswinkel des Laserstrahls gezielt verändern kann — und zwar so, dass der Strahl trotzdem immer denselben Punkt auf dem unzuverlässigen internen Spiegel trifft. Dadurch lässt sich die Fehlausrichtung ausgleichen, ohne den Aufbau anzufassen.</p>
+
+    <h3>Elektronik &amp; Software</h3>
+    <p>Damit das System selbstständig arbeitet, habe ich einen Sensor (eine Vierquadranten-Photodiode) eingebaut, der erkennt, wo der Strahl gerade auftrifft. Die zugehörige Verstärkerelektronik habe ich selbst entworfen und aufgebaut. Ein Mikrocontroller liest diese Sensordaten aus und steuert die Motoren des Korrekturspiegels entsprechend an — die komplette Steuerungssoftware dafür habe ich selbst geschrieben, inklusive eines Suchalgorithmus, der den Strahl zunächst grob findet und ihn anschließend präzise zentriert.</p>
+
+    <h3>Ergebnisse</h3>
+    <p>In einem achtstündigen Langzeittest habe ich überprüft, ob sich die Position des zentrierten Strahls im Lauf der Zeit unbemerkt verschiebt — das war nicht der Fall, die Abweichungen blieben durchgehend unter 20 Mikrometern. Anschließend habe ich das System für verschiedene Fehlstellungen des internen Spiegels getestet: Selbst bei einer Verkippung von bis zu 1,5 Grad korrigierte das System den Strahl zuverlässig auf eine Position, die nur wenige hundert Mikrometer vom Idealpunkt abwich — deutlich kleiner als der Strahldurchmesser selbst und damit unproblematisch für die spätere Abbildung der Atome.</p>
+
+    <h3>Bedeutung</h3>
+    <p>Das System wurde für den Einsatz in einem laufenden Experiment zu ultrakalten Atomen entwickelt. Es erspart die manuelle Nachjustage vor jedem Experimentdurchlauf und sorgt dafür, dass der Abbildungsstrahl zuverlässig durch das Mikroskop läuft — unabhängig davon, wie der interne Spiegel gerade zufällig ausgerichtet ist.</p>
+  </div>
+  <div class="post-footer">
+    <a class="btn" href="https://www.pi5.uni-stuttgart.de/documents/abgeschlossene-arbeiten/2019-Pinnock-Samuel-Self-Adjusting-Imaging-Scheme-for-Ultracold-Atoms-BSC.pdf" target="_blank" rel="noopener">Vollständige Bachelorarbeit (PDF) &darr;</a>
+    <a class="btn" href="https://samuelpinnock.com/files/tex/resume.pdf" target="_blank" rel="noopener">Lebenslauf herunterladen &darr;</a>
+  </div>
+</main>
+</body>
+</html>
